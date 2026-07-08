@@ -1,0 +1,42 @@
+
+name: Build WaterSystemAnalyzer Ver42
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python 3.13
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Verify source files
+        shell: cmd
+        run: |
+          dir
+          if not exist WaterSystemAnalyzer_Ver42_StableIntegrated.py exit /b 1
+          if not exist requirements_py313_pyside6_nuitka.txt exit /b 1
+
+      - name: Run Build BAT
+        shell: cmd
+        run: build_exe.bat
+
+      - name: Verify build output
+        shell: cmd
+        run: |
+          dir build
+          dir dist
+          dir dist\WaterSystemAnalyzer_Ver42
+
+      - name: Upload Build
+        uses: actions/upload-artifact@v4
+        with:
+          name: WaterSystemAnalyzer_Ver42
+          path: dist/WaterSystemAnalyzer_Ver42
